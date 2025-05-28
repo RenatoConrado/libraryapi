@@ -1,0 +1,46 @@
+networks:
+  library-network:
+    driver: bridge
+
+services:
+#  app:
+#    build: .
+#    container_name: spring-library-app
+#    ports:
+#      - "8080:8080"
+#    networks:
+#      - library-network
+#    depends_on:
+#      database:
+#        condition: service_healthy
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/library
+#      SPRING_DATASOURCE_USERNAME: postgres
+#      SPRING_DATASOURCE_PASSWORD: postgres
+  database:
+    image: postgres
+    container_name: library-database
+    ports:
+      - "5432:5432"
+    networks:
+      - library-network
+    environment:
+      POSTGRES_DB: library
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d postgres" ]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    ports:
+      - "5431:80"
+    networks:
+      - library-network
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin

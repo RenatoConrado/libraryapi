@@ -1,7 +1,8 @@
 package io.github.renatoconrado.libraryapi.repository;
 
-import io.github.renatoconrado.libraryapi.model.Author;
-import io.github.renatoconrado.libraryapi.model.Book;
+import io.github.renatoconrado.libraryapi.authors.repository.AuthorRepository;
+import io.github.renatoconrado.libraryapi.authors.model.Author;
+import io.github.renatoconrado.libraryapi.books.model.Book;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

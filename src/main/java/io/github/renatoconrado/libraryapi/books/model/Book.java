@@ -1,13 +1,22 @@
-package io.github.renatoconrado.libraryapi.model;
+package io.github.renatoconrado.libraryapi.books.model;
 
+import io.github.renatoconrado.libraryapi.authors.model.Author;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
+@EntityListeners(AuditingEntityListener.class)
 @Data
 @Table(catalog = "library", schema = "public")
 public @Entity class Book {
@@ -26,10 +35,19 @@ public @Entity class Book {
     private LocalDate releaseDate;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Genre genres;
 
     @Column(precision = 18, scale = 4)
     private BigDecimal price;
+
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+
+    private UUID idUser;
 
     /**
      * {@code fetch.LAZY} vai trazer apenas o livro e não o autor.
@@ -37,15 +55,12 @@ public @Entity class Book {
      */
     @ManyToOne(/*cascade = CascadeType.ALL,*/ fetch = FetchType.LAZY)
     @JoinColumn(name = "id_author", nullable = false)
-    @EqualsAndHashCode.Exclude
+    @EqualsAndHashCode.Exclude @ToString.Exclude
     private Author author;
 
     public Book() {}
 
-    public Book(
-            String isbn,
-            String title, LocalDate releaseDate, Genre genres, BigDecimal price, Author author
-    ) {
+    public Book(String isbn, String title, LocalDate releaseDate, Genre genres, BigDecimal price, Author author) {
         this.isbn = isbn;
         this.title = title;
         this.releaseDate = releaseDate;
@@ -54,4 +69,7 @@ public @Entity class Book {
         this.author = author;
     }
 
+    public static Book of(@Valid BookRegisterDTO dto) {
+        return new Book(dto.isbn(), dto.title(), dto.releaseDate(), dto.genres(), dto.price(), null);
+    }
 }

@@ -1,8 +1,10 @@
 package io.github.renatoconrado.libraryapi.repository;
 
-import io.github.renatoconrado.libraryapi.model.Author;
-import io.github.renatoconrado.libraryapi.model.Book;
-import io.github.renatoconrado.libraryapi.model.Genre;
+import io.github.renatoconrado.libraryapi.authors.repository.AuthorRepository;
+import io.github.renatoconrado.libraryapi.books.repository.BookRepository;
+import io.github.renatoconrado.libraryapi.authors.model.Author;
+import io.github.renatoconrado.libraryapi.books.model.Book;
+import io.github.renatoconrado.libraryapi.books.model.Genre;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,0 +1,40 @@
+@url = {{urls.authors}}
+### Create Author
+POST {{url}}
+Content-Type: application/json
+
+{
+  "name": "Jhon lock",
+  "birthdate": "1989-02-16",
+  "citizenship": "America"
+}
+
+### Get All
+@name =
+@citizenship =
+GET {{url}}?name={{name}}&citizenship={{citizenship}}
+
+> {%
+    if (!response.body.length) {
+        client.exit();
+    }
+    const last = response.body[response.body.length - 1];
+    client.global.set("id", last.id || "");
+    client.log(`Element: ${JSON.stringify(last)}`);
+%}
+
+### Get By Id
+GET {{url}}/{{id}}
+
+### UPDATE
+PUT {{url}}/{{id}}
+Content-Type: application/json
+
+{
+  "name": "macarena",
+  "birthdate": "1989-02-16",
+  "citizenship": "America"
+}
+
+### DELETE
+DELETE {{url}}/{{id}}

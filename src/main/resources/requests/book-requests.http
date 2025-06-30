@@ -1,0 +1,88 @@
+@url = {{urls.books}}
+@id = 66982b46-5f47-45dc-9458-c08291772452
+
+// Infelizmente não tô conseguindo encriptar
+// para base64 em uma variavel automaticamente.
+// acaba que eu tenho que usar manualmente.
+// É uma pena mas por praticidade, vou ter voltar pro Insomnia.
+@auth = Basic user 4fdb62c7-f43e-4eab-ba02-6b6b1f5bb295
+@password = 4fdb62c7
+### POST
+POST {{url}}
+Content-Type: application/json
+Authorization: {{auth}}
+
+{
+  "isbn": "978-0-14-044913-6",
+  "title": "Travels",
+  "releaseDate": "2020-01-01",
+  "genres": "FICTION",
+  "price": 50,
+  "idAuthor": "7d1ebe9e-b5b1-4c5b-9127-a82da1e29c0f"
+}
+
+### Get All
+GET {{url}}
+Authorization: Basic user 4fdb62c7-f43e-4eab-ba02-6b6b1f5bb295
+# Authorization: {{auth}}
+# Authorization: Basic user {{password}}
+
+> {%
+    if (response.status != "200") client.exit();
+
+    const content = response.body["content"];
+    const lastId = content[content.length - 1].id;
+
+    client.global.set("id", lastId || "");
+    client.log(`Element: ${JSON.stringify(lastId)}`);
+%}
+
+### Page
+GET {{url}}?page-size=2
+Authorization: {{auth}}
+
+### Query isbn
+@isbn = 978-0-306-40615-7
+GET {{url}}?isbn={{isbn}}
+Authorization: {{auth}}
+
+### Query title
+@title = travel
+GET {{url}}?title={{title}}
+Authorization: {{auth}}
+
+### Query genre
+@genres = FICTION
+GET {{url}}?genres={{genres}}
+Authorization: {{auth}}
+
+### Query release Year
+@releaseYear = 2020
+GET {{url}}?release-year={{releaseYear}}
+Authorization: {{auth}}
+
+### Query author Name
+@author = macarena
+GET {{url}}?author-name={{author}}
+Authorization: {{auth}}
+
+### Get By Id
+GET {{url}}/{{id}}
+Authorization: {{auth}}
+
+### UPDATE
+PUT {{url}}/{{id}}
+Content-Type: application/json
+Authorization: {{auth}}
+
+{
+  "isbn": "",
+  "title": "",
+  "releaseDate": "",
+  "genres": "",
+  "author": ""
+}
+
+### DELETE
+DELETE {{url}}/{{id}}
+Authorization: {{auth}}

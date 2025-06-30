@@ -1,4 +1,4 @@
-CREATE TABLE author (
+CREATE TABLE IF NOT EXISTS author (
     id          uuid         NOT NULL PRIMARY KEY,
     name        varchar(100) NOT NULL,
     birthdate   date         NOT NULL,
@@ -8,7 +8,7 @@ CREATE TABLE author (
     id_user     uuid
 );
 
-CREATE TABLE book (
+CREATE TABLE IF NOT EXISTS book (
     id           uuid         NOT NULL PRIMARY KEY,
     isbn         varchar(20)  NOT NULL UNIQUE,
     title        varchar(150) NOT NULL,
@@ -21,3 +21,10 @@ CREATE TABLE book (
     id_author    uuid         NOT NULL REFERENCES author (id),
     CONSTRAINT check_genre CHECK ( genres IN ('FICTION', 'FANTASY', 'MYSTERY', 'ROMANCE', 'BIBLIOGRAPHY', 'SCIENCE') )
 );
+
+CREATE TABLE IF NOT EXISTS users (
+    id       uuid         NOT NULL PRIMARY KEY,
+    login    varchar(20)  NOT NULL UNIQUE,
+    password varchar(300) NOT NULL,
+    roles    varchar[]
+)

@@ -7,6 +7,7 @@ import io.github.renatoconrado.libraryapi.exception.custom.ProcedureNotAllowedEx
 import io.github.renatoconrado.libraryapi.exception.error.ErrorResponse;
 import io.github.renatoconrado.libraryapi.exception.error.FieldAndError;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -29,8 +30,7 @@ public @RestControllerAdvice class GlobalExceptionHandler {
     public ErrorResponse handleMethodArgumentNotValid(
         MethodArgumentNotValidException exception
     ) {
-        List<FieldAndError> fieldAndErrors = exception
-            .getFieldErrors()
+        List<FieldAndError> fieldAndErrors = exception.getFieldErrors()
             .stream()
             .map(fe -> new FieldAndError(fe.getField(), fe.getDefaultMessage()))
             .toList();
@@ -57,7 +57,10 @@ public @RestControllerAdvice class GlobalExceptionHandler {
         return new ErrorResponse(
             HttpStatus.UNPROCESSABLE_ENTITY,
             "Validation Error",
-            List.of(new FieldAndError(exception.getField(), exception.getMessage()))
+            List.of(new FieldAndError(
+                exception.getField(),
+                exception.getMessage()
+            ))
         );
     }
 
@@ -71,9 +74,21 @@ public @RestControllerAdvice class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidFieldsException.class)
-    public ErrorResponse handleInvalidFields(
-        InvalidFieldsException exception
-    ) {
+    public ErrorResponse handleInvalidFields(InvalidFieldsException exception) {
         return ErrorResponse.badRequest(exception.getMessage());
     }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ErrorResponse handleAuthorizationDeniedException(
+        AuthorizationDeniedException exception
+    ) {
+        return new ErrorResponse(
+            HttpStatus.FORBIDDEN,
+            "You don't haver access to this resource: " + exception.getAuthorizationResult(),
+            List.of()
+        );
+    }
+
+
 }

@@ -1,6 +1,7 @@
 package io.github.renatoconrado.libraryapi.authors.model;
 
 import io.github.renatoconrado.libraryapi.books.model.Book;
+import io.github.renatoconrado.libraryapi.users.model.Users;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -37,7 +38,9 @@ public @Entity class Author {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    private UUID idUser;
+    @ManyToOne
+    @JoinColumn(name = "id_user")
+    private Users user;
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude

@@ -2,6 +2,7 @@
 ### Create Author
 POST {{url}}
 Content-Type: application/json
+Authorization: Basic admin 123
 
 {
   "name": "Jhon lock",
@@ -15,12 +16,13 @@ Content-Type: application/json
 GET {{url}}?name={{name}}&citizenship={{citizenship}}
 
 > {%
-    if (!response.body.length) {
+    const body = response.body;
+    if (!body.length) {
         client.exit();
     }
-    const last = response.body[response.body.length - 1];
-    client.global.set("id", last.id || "");
-    client.log(`Element: ${JSON.stringify(last)}`);
+    const lastId = body[body.length - 1].id;
+    client.global.set("id", lastId || "");
+    client.log(`Element: ${JSON.stringify(lastId)}`);
 %}
 
 ### Get By Id

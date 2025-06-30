@@ -6,6 +6,8 @@ import io.github.renatoconrado.libraryapi.authors.repository.AuthorRepository;
 import io.github.renatoconrado.libraryapi.exception.custom.DuplicatedRecordException;
 import io.github.renatoconrado.libraryapi.exception.custom.InvalidFieldsException;
 import io.github.renatoconrado.libraryapi.exception.custom.ProcedureNotAllowedException;
+import io.github.renatoconrado.libraryapi.users.model.Users;
+import io.github.renatoconrado.libraryapi.users.service.SecurityUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
@@ -17,27 +19,26 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@RequiredArgsConstructor
-public @Service class AuthorService {
+@RequiredArgsConstructor public @Service class AuthorService {
 
     private final AuthorRepository repository;
     private final AuthorValidator validator;
+    private final SecurityUserService securityUserService;
 
     /**
      * @deprecated use {@code  queryByExample()} instead
      */
     public List<Author> query(String name, String citizenship) {
-        return repository.findAllByNameContainingIgnoreCaseAndCitizenshipContainingIgnoreCase(
-            name,
-            citizenship);
+        return repository.findAllByNameContainingIgnoreCaseAndCitizenshipContainingIgnoreCase(name,
+            citizenship
+        );
     }
 
     public List<Author> queryByExample(String name, String citizenship) {
         var author = new Author();
         author.setName(name);
         author.setCitizenship(citizenship);
-        var matcher = ExampleMatcher
-            .matching()
+        var matcher = ExampleMatcher.matching()
             .withIgnorePaths("id", "created_at", "updated_at")
             .withIgnoreNullValues()
             .withIgnoreCase()
@@ -50,6 +51,10 @@ public @Service class AuthorService {
      */
     public void create(@Valid Author author) throws DuplicatedRecordException {
         validator.validate(AuthorDTO.of(author));
+
+        Users user = securityUserService.getLoggedUser();
+        author.setUser(user);
+
         repository.save(author);
     }
 
@@ -61,17 +66,16 @@ public @Service class AuthorService {
      * @return {@code true} if updated, {@code false} if author not found or DTO is invalid
      * @throws InvalidFieldsException if all fields are empty
      */
-    public boolean update(UUID id, AuthorDTO dto) throws InvalidFieldsException {
+    public boolean update(UUID id, AuthorDTO dto)
+        throws InvalidFieldsException {
         validator.emptyFields(dto);
-        return getById(id)
-            .map(author -> {
-                author.setName(dto.name());
-                author.setBirthdate(dto.birthdate());
-                author.setCitizenship(dto.citizenship());
-                repository.save(author);
-                return true;
-            })
-            .orElse(false);
+        return getById(id).map(author -> {
+            author.setName(dto.name());
+            author.setBirthdate(dto.birthdate());
+            author.setCitizenship(dto.citizenship());
+            repository.save(author);
+            return true;
+        }).orElse(false);
     }
 
     /**
@@ -79,14 +83,11 @@ public @Service class AuthorService {
      * @throws ProcedureNotAllowedException if author has books
      */
     public boolean delete(UUID uuid) throws ProcedureNotAllowedException {
-        return repository
-            .findById(uuid)
-            .map(author -> {
-                validator.hasBook(author);
-                repository.delete(author);
-                return true;
-            })
-            .orElse(false);
+        return repository.findById(uuid).map(author -> {
+            validator.hasBook(author);
+            repository.delete(author);
+            return true;
+        }).orElse(false);
     }
 
 }

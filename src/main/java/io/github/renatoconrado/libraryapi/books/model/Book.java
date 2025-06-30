@@ -1,9 +1,9 @@
 package io.github.renatoconrado.libraryapi.books.model;
 
 import io.github.renatoconrado.libraryapi.authors.model.Author;
+import io.github.renatoconrado.libraryapi.users.model.Users;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -47,7 +47,9 @@ public @Entity class Book {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    private UUID idUser;
+    @ManyToOne
+    @JoinColumn(name = "id_user")
+    private Users user;
 
     /**
      * {@code fetch.LAZY} vai trazer apenas o livro e não o autor.

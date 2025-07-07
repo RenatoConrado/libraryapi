@@ -5,7 +5,6 @@ import io.github.renatoconrado.libraryapi.books.model.Genre;
 import io.github.renatoconrado.libraryapi.books.repository.BookRepository;
 import io.github.renatoconrado.libraryapi.exception.custom.DuplicatedRecordException;
 import io.github.renatoconrado.libraryapi.exception.custom.ProcedureNotAllowedException;
-import io.github.renatoconrado.libraryapi.users.model.Users;
 import io.github.renatoconrado.libraryapi.users.service.SecurityUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -32,8 +31,8 @@ public @Service class BookService {
     public void save(Book book) throws DuplicatedRecordException {
         this.validator.validate(book);
 
-        Users user = securityUserService.getLoggedUser();
-        book.setUser(user);
+        securityUserService.getLoggedUser()
+            .ifPresentOrElse(book::setUser, System.out::println);
 
         this.repository.save(book);
     }

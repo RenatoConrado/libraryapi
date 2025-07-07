@@ -75,6 +75,9 @@
         <input type="password" id="password" name="password" placeholder="Senha" required/>
         <button type="submit">Entrar</button>
     </form>
+    <button class="button">
+        <a th:href="@{/oauth2/authorization/google}">Enter with Google</a>
+    </button>
     <div class="error" id="error-message"></div>
 </div>
 </body>

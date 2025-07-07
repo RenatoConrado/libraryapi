@@ -7,10 +7,10 @@ import org.mapstruct.Mapping;
 public interface UserMapper {
 
     @Mapping(target = "id", ignore = true)
-    Users toEntity(UserDTO userDTO);
+    User toEntity(UserDTO userDTO);
 
-    UserDTO userToDTO(Users user);
+    UserDTO userToDTO(User user);
 
     @Mapping(source = "login", target = "username")
-    UserSafeDTO userToSafeDTO(Users users);
+    UserSafeDTO userToSafeDTO(User user);
 }

@@ -1,6 +1,5 @@
 package io.github.renatoconrado.libraryapi.books.model;
 
-import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.ISBN;
 

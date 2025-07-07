@@ -1,7 +1,7 @@
 package io.github.renatoconrado.libraryapi.authors.model;
 
 import io.github.renatoconrado.libraryapi.books.model.Book;
-import io.github.renatoconrado.libraryapi.users.model.Users;
+import io.github.renatoconrado.libraryapi.users.model.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -40,7 +40,7 @@ public @Entity class Author {
 
     @ManyToOne
     @JoinColumn(name = "id_user")
-    private Users user;
+    private User user;
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude

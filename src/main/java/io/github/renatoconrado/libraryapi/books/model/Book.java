@@ -1,7 +1,7 @@
 package io.github.renatoconrado.libraryapi.books.model;
 
 import io.github.renatoconrado.libraryapi.authors.model.Author;
-import io.github.renatoconrado.libraryapi.users.model.Users;
+import io.github.renatoconrado.libraryapi.users.model.User;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.Data;
@@ -49,7 +49,7 @@ public @Entity class Book {
 
     @ManyToOne
     @JoinColumn(name = "id_user")
-    private Users user;
+    private User user;
 
     /**
      * {@code fetch.LAZY} vai trazer apenas o livro e não o autor.

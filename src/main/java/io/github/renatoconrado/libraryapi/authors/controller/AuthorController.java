@@ -7,7 +7,7 @@ import io.github.renatoconrado.libraryapi.authors.service.AuthorService;
 import io.github.renatoconrado.libraryapi.common.GenericController;
 import io.github.renatoconrado.libraryapi.exception.custom.InvalidFieldsException;
 import io.github.renatoconrado.libraryapi.exception.custom.ProcedureNotAllowedException;
-import io.github.renatoconrado.libraryapi.users.model.Users;
+import io.github.renatoconrado.libraryapi.users.model.User;
 import io.github.renatoconrado.libraryapi.users.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -57,7 +57,7 @@ public @RestController class AuthorController implements GenericController {
         Authentication authentication
     ) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        Users user = userService.getByUsername(userDetails.getUsername());
+        User user = userService.getByUsername(userDetails.getUsername()).orElseThrow();
 
         Author author = mapper.toEntity(dto);
         author.setUser(user);

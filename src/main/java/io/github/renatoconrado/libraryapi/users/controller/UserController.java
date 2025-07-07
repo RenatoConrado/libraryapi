@@ -1,9 +1,9 @@
 package io.github.renatoconrado.libraryapi.users.controller;
 
+import io.github.renatoconrado.libraryapi.users.model.User;
 import io.github.renatoconrado.libraryapi.users.model.UserDTO;
 import io.github.renatoconrado.libraryapi.users.model.UserMapper;
 import io.github.renatoconrado.libraryapi.users.model.UserSafeDTO;
-import io.github.renatoconrado.libraryapi.users.model.Users;
 import io.github.renatoconrado.libraryapi.users.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,19 +21,20 @@ public @RestController class UserController {
     @GetMapping
     public ResponseEntity<Page<UserSafeDTO>> query(
         @RequestParam(required = false) final String username,
+        @RequestParam(required = false) final String email,
         @RequestParam(defaultValue = "0") Integer page,
         @RequestParam(defaultValue = "10", value = "page-size") Integer pageSize
     ) {
         return ResponseEntity.ok(
-            service.query(username, page, pageSize)
-                   .map(mapper::userToSafeDTO)
+            service.query(username, email, page, pageSize)
+            .map(mapper::userToSafeDTO)
         );
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public void create(@Valid @RequestBody UserDTO dto) {
-        Users user = mapper.toEntity(dto);
+        User user = mapper.toEntity(dto);
         service.save(user);
     }
 

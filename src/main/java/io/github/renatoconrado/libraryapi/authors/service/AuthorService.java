@@ -6,13 +6,14 @@ import io.github.renatoconrado.libraryapi.authors.repository.AuthorRepository;
 import io.github.renatoconrado.libraryapi.exception.custom.DuplicatedRecordException;
 import io.github.renatoconrado.libraryapi.exception.custom.InvalidFieldsException;
 import io.github.renatoconrado.libraryapi.exception.custom.ProcedureNotAllowedException;
-import io.github.renatoconrado.libraryapi.users.model.Users;
 import io.github.renatoconrado.libraryapi.users.service.SecurityUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.ExampleMatcher.StringMatcher;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedCredentialsNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,7 +30,8 @@ import java.util.UUID;
      * @deprecated use {@code  queryByExample()} instead
      */
     public List<Author> query(String name, String citizenship) {
-        return repository.findAllByNameContainingIgnoreCaseAndCitizenshipContainingIgnoreCase(name,
+        return repository.findAllByNameContainingIgnoreCaseAndCitizenshipContainingIgnoreCase(
+            name,
             citizenship
         );
     }
@@ -49,11 +51,13 @@ import java.util.UUID;
     /**
      * @throws DuplicatedRecordException if Author is Duplicated
      */
-    public void create(@Valid Author author) throws DuplicatedRecordException {
+    public void create(@Valid Author author)
+        throws DuplicatedRecordException, AuthenticationException {
         validator.validate(AuthorDTO.of(author));
 
-        Users user = securityUserService.getLoggedUser();
-        author.setUser(user);
+        securityUserService.getLoggedUser().ifPresentOrElse(author::setUser, () -> {
+            throw new PreAuthenticatedCredentialsNotFoundException("User Not Found");
+        });
 
         repository.save(author);
     }

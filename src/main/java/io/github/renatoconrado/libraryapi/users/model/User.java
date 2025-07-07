@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-public @Entity class Users {
+@Table(schema = "public")
+public @Entity class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -19,9 +20,21 @@ public @Entity class Users {
     private String login;
 
     @Column(nullable = false)
+    private String email;
+
+    @Column(nullable = false)
     private String password;
 
     @Type(ListArrayType.class)
     @Column(columnDefinition = "varchar[]")
     private List<String> roles;
+
+    public User(String login, String email, String password, List<String> roles) {
+        this.login = login;
+        this.email = email;
+        this.password = password;
+        this.roles = roles;
+    }
+
+    public User() {}
 }

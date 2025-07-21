@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS public.author (
+CREATE TABLE IF NOT EXISTS library.public.author (
     id          uuid         NOT NULL PRIMARY KEY,
     name        varchar(100) NOT NULL,
     birthdate   date         NOT NULL,
@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS public.author (
     id_user     uuid
 );
 
-CREATE TABLE IF NOT EXISTS public.book (
+CREATE TABLE IF NOT EXISTS library.public.book (
     id           uuid         NOT NULL PRIMARY KEY,
     isbn         varchar(20)  NOT NULL UNIQUE,
     title        varchar(150) NOT NULL,
@@ -24,10 +24,18 @@ CREATE TABLE IF NOT EXISTS public.book (
         )
 );
 
-CREATE TABLE IF NOT EXISTS public.user (
+CREATE TABLE IF NOT EXISTS library.public.user (
     id       uuid         NOT NULL PRIMARY KEY,
     login    varchar(20)  NOT NULL UNIQUE,
     email    varchar(150) NOT NULL,
     password varchar(300) NOT NULL,
     roles    varchar[]
 );
+
+CREATE TABLE IF NOT EXISTS library.public.client (
+    id            uuid         NOT NULL PRIMARY KEY,
+    client_id     varchar(150) NOT NULL,
+    client_secret varchar(400) NOT NULL,
+    redirect_uri  varchar(200) NOT NULL,
+    scope         varchar(50)
+)

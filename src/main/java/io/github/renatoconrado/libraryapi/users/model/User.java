@@ -2,13 +2,19 @@ package io.github.renatoconrado.libraryapi.users.model;
 
 import io.hypersistence.utils.hibernate.type.array.ListArrayType;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.Type;
 
 import java.util.List;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Table(schema = "public")
 public @Entity class User {
 
@@ -35,6 +41,4 @@ public @Entity class User {
         this.password = password;
         this.roles = roles;
     }
-
-    public User() {}
 }

@@ -26,8 +26,7 @@ public @RestController class UserController {
         @RequestParam(defaultValue = "10", value = "page-size") Integer pageSize
     ) {
         return ResponseEntity.ok(
-            service.query(username, email, page, pageSize)
-            .map(mapper::userToSafeDTO)
+            service.query(username, email, page, pageSize).map(mapper::userToSafeDTO)
         );
     }
 

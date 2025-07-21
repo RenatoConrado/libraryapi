@@ -18,12 +18,18 @@ public abstract class BookMapper {
         this.authorRepository = authorRepository;
     }
 
-    @Mapping(target = "author",
-             expression =
-                 """
-                 java(authorRepository.findById(dto.idAuthor())
-                 .orElseThrow(() -> new io.github.renatoconrado.libraryapi.exception.custom.ProcedureNotAllowedException("The book must have registered author"))
-                 )""")
+    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(
+        target = "author",
+        expression =
+            """
+            java(authorRepository.findById(dto.idAuthor())
+            .orElseThrow(() -> new io.github.renatoconrado.libraryapi.exception.custom.ProcedureNotAllowedException("The book must have registered author"))
+            )"""
+    )
     public abstract Book toEntity(BookRegisterDTO dto);
 
     public abstract BookDetailsDTO toDetailsDTO(Book book);

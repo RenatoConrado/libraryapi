@@ -12,8 +12,10 @@ spring:
     properties.hibernate.format_sql: true
   security.oauth2.client.registration:
     google:
-      client-id: ${secrets.client-id}
-      client-secret: ${secrets.client-secret}
-  devtools:
-    restart.enabled: false
-    remote.restart.enabled: false
+      client-id: ${secrets.GOOGLE_CLIENT_ID}
+      client-secret: ${secrets.GOOGLE_CLIENT_SECRET}
+logging:
+  include-application-group: false
+  include-application-name: false
+  pattern:
+    dateformat: h:m:s

@@ -17,6 +17,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static io.github.renatoconrado.libraryapi.books.repository.BookSpecification.*;
+import static io.github.renatoconrado.libraryapi.common.constants.Pageable.normalizePage;
+import static io.github.renatoconrado.libraryapi.common.constants.Pageable.normalizePageSize;
+import static java.lang.System.err;
 
 @RequiredArgsConstructor
 public @Service class BookService {
@@ -28,13 +31,12 @@ public @Service class BookService {
      * @throws DuplicatedRecordException    if ISBN of the book already exists
      * @throws ProcedureNotAllowedException if the book don't have a registered author
      */
-    public void save(Book book) throws DuplicatedRecordException {
-        this.validator.validate(book);
+    public void save(Book book) {
+        validator.validate(book);
 
-        securityUserService.getLoggedUser()
-            .ifPresentOrElse(book::setUser, System.out::println);
+        securityUserService.getLoggedUser().ifPresentOrElse(book::setUser, err::println);
 
-        this.repository.save(book);
+        repository.save(book);
     }
 
     public Page<Book> query(
@@ -46,45 +48,42 @@ public @Service class BookService {
         Integer page,
         Integer pageSize
     ) {
-        Specification<Book> specs = (root, query, criteriaBuilder) -> null;
-        if (isbn != null) {
-            specs = specs.and(isbnEquals(isbn));
-        }
-        if (title != null) {
-            specs = specs.and(titleLike(title));
-        }
-        if (genres != null) {
-            specs = specs.and(genreEqual(genres));
-        }
-        if (releaseYear != null) {
-            specs = specs.and(releaseYearEqual(releaseYear));
-        }
-        if (author != null) {
-            specs = specs.and(authorLike(author));
-        }
-        Pageable pageRequest = PageRequest.of(page, pageSize);
+        Specification<Book> specs = (root, query, cb) -> null;
+
+        specs = specs.and(isbnEquals(isbn))
+            .and(titleLike(title))
+            .and(genreEqual(genres))
+            .and(releaseYearEqual(releaseYear))
+            .and(authorLike(author));
+
+        Pageable pageRequest = PageRequest.of(
+            normalizePage(page),
+            normalizePageSize(pageSize)
+        );
+
         return repository.findAll(specs, pageRequest);
     }
 
     public Optional<Book> getById(UUID id) {
-        return this.repository.findById(id);
+        return repository.findById(id);
     }
 
     public boolean update(UUID id, Book newBook) {
-        return this.repository.findById(id).map(book -> {
+        return repository.findById(id).map(book -> {
             book.setIsbn(newBook.getIsbn());
             book.setTitle(newBook.getTitle());
             book.setReleaseDate(newBook.getReleaseDate());
             book.setGenres(newBook.getGenres());
             book.setAuthor(newBook.getAuthor());
-            this.save(book);
+
+            repository.save(book);
             return true;
         }).orElse(false);
     }
 
     public boolean delete(UUID id) {
-        return this.repository.findById(id).map(book -> {
-            this.repository.delete(book);
+        return repository.findById(id).map(book -> {
+            repository.delete(book);
             return true;
         }).orElse(false);
     }

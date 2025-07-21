@@ -1,6 +1,9 @@
 package io.github.renatoconrado.libraryapi.books.model;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Positive;
 import org.hibernate.validator.constraints.ISBN;
 
 import java.math.BigDecimal;

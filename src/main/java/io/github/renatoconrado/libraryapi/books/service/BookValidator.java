@@ -14,8 +14,12 @@ import java.util.Optional;
 public @Component class BookValidator {
     private final BookRepository repository;
 
-    public void validate(Book book)
-        throws DuplicatedRecordException, InvalidFieldException {
+    /**
+     * @param book
+     * @throws DuplicatedRecordException
+     * @throws InvalidFieldException
+     */
+    public void validate(Book book) {
         if (duplicatedISBN(book)) {
             throw new DuplicatedRecordException("ISBN already registered " + book.getIsbn());
         }
@@ -38,7 +42,7 @@ public @Component class BookValidator {
             return foundBook.isPresent();
         }
         return foundBook.map(Book::getId)
-                        .map(book.getId()::equals)
-                        .orElse(false);
+            .map(book.getId()::equals)
+            .orElse(false);
     }
 }

@@ -1,4 +1,4 @@
-package io.github.renatoconrado.libraryapi.security;
+package io.github.renatoconrado.libraryapi.configuration.authentication;
 
 import io.github.renatoconrado.libraryapi.users.model.User;
 import lombok.Getter;
@@ -16,7 +16,8 @@ public class CustomAuthentication implements Authentication {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.user.getRoles().stream()
+        return user.getRoles()
+            .stream()
             .map(s -> "ROLE_" + s)
             .map(SimpleGrantedAuthority::new)
             .toList();
@@ -42,11 +43,16 @@ public class CustomAuthentication implements Authentication {
         return true;
     }
 
+    /**
+     * @param isAuthenticated {@code true} if the token should be trusted (which may
+     * result in an exception) or {@code false} if the token should not be trusted
+     * @throws IllegalArgumentException if an attempt to make the authentication token
+     * trusted (by passing {@code true} as the argument) is rejected due to the
+     * implementation being immutable or implementing its own alternative approach to
+     * {@link #isAuthenticated()}
+     */
     @Override
-    public void setAuthenticated(boolean isAuthenticated)
-        throws IllegalArgumentException {
-
-    }
+    public void setAuthenticated(boolean isAuthenticated) {}
 
     @Override
     public String getName() {

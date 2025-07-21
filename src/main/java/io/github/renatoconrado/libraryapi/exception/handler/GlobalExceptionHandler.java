@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
 
+import static io.github.renatoconrado.libraryapi.common.constants.Validation.VALIDATION_ERROR;
+
 public @RestControllerAdvice class GlobalExceptionHandler {
 
 /*    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -36,9 +38,17 @@ public @RestControllerAdvice class GlobalExceptionHandler {
             .toList();
         return new ErrorResponse(
             HttpStatus.UNPROCESSABLE_ENTITY,
-            "Validation Error",
+            VALIDATION_ERROR,
             fieldAndErrors
         );
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ErrorResponse handleIllegalArgumentException(
+        IllegalArgumentException exception
+    ) {
+        return ErrorResponse.badRequest(exception.getMessage());
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
@@ -56,7 +66,7 @@ public @RestControllerAdvice class GlobalExceptionHandler {
     ) {
         return new ErrorResponse(
             HttpStatus.UNPROCESSABLE_ENTITY,
-            "Validation Error",
+            VALIDATION_ERROR,
             List.of(new FieldAndError(
                 exception.getField(),
                 exception.getMessage()
@@ -89,6 +99,5 @@ public @RestControllerAdvice class GlobalExceptionHandler {
             List.of()
         );
     }
-
 
 }

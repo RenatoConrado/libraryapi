@@ -4,6 +4,7 @@ import io.github.renatoconrado.libraryapi.users.model.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import static java.lang.String.format;
@@ -21,13 +22,13 @@ public @Controller class ViewController {
         if (authentication.getPrincipal() instanceof User user) {
             return format(
                 """
-                <p>
-                    ID      : %s<br/>
-                    Username: %s<br/>
-                    Email   : %s<br/>
-                    Password: %s<br/>
-                    Roles   : %s<br/>
-                <p/>
+                <main>
+                    <p>ID      : %s</p>
+                    <p>Username: %s</p>
+                    <p>Email   : %s</p>
+                    <p>Password: %s</p>
+                    <p>Roles   : %s</p>
+                <main/>
                 """,
                 user.getId(),
                 user.getLogin(),
@@ -38,4 +39,11 @@ public @Controller class ViewController {
         }
         return authentication.getPrincipal().toString().replace(",", ",<br/>");
     }
+
+    @ResponseBody
+    @GetMapping("/authorized")
+    public String authorized(@RequestParam String code) {
+        return code;
+    }
+
 }

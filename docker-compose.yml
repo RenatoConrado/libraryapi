@@ -3,20 +3,20 @@ networks:
     driver: bridge
 
 services:
-#  app:
-#    build: .
-#    container_name: spring-library-app
-#    ports:
-#      - "8080:8080"
-#    networks:
-#      - library-network
-#    depends_on:
-#      database:
-#        condition: service_healthy
-#    environment:
-#      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/library
-#      SPRING_DATASOURCE_USERNAME: postgres
-#      SPRING_DATASOURCE_PASSWORD: postgres
+  #  app:
+  #    build: .
+  #    container_name: spring-library-app
+  #    ports:
+  #      - "8080:8080"
+  #    networks:
+  #      - library-network
+  #    depends_on:
+  #      database:
+  #        condition: service_healthy
+  #    environment:
+  #      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/library
+  #      SPRING_DATASOURCE_USERNAME: postgres
+  #      SPRING_DATASOURCE_PASSWORD: postgres
   database:
     image: postgres
     container_name: library-database

@@ -20,7 +20,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@RequiredArgsConstructor public @Service class AuthorService {
+@RequiredArgsConstructor
+public @Service class AuthorService {
 
     private final AuthorRepository repository;
     private final AuthorValidator validator;
@@ -29,6 +30,7 @@ import java.util.UUID;
     /**
      * @deprecated use {@code  queryByExample()} instead
      */
+    @Deprecated
     public List<Author> query(String name, String citizenship) {
         return repository.findAllByNameContainingIgnoreCaseAndCitizenshipContainingIgnoreCase(
             name,
@@ -55,9 +57,11 @@ import java.util.UUID;
         throws DuplicatedRecordException, AuthenticationException {
         validator.validate(AuthorDTO.of(author));
 
-        securityUserService.getLoggedUser().ifPresentOrElse(author::setUser, () -> {
-            throw new PreAuthenticatedCredentialsNotFoundException("User Not Found");
-        });
+        securityUserService.getLoggedUser().ifPresentOrElse(
+            author::setUser, () -> {
+                throw new PreAuthenticatedCredentialsNotFoundException("User Not Found");
+            }
+        );
 
         repository.save(author);
     }
@@ -70,8 +74,7 @@ import java.util.UUID;
      * @return {@code true} if updated, {@code false} if author not found or DTO is invalid
      * @throws InvalidFieldsException if all fields are empty
      */
-    public boolean update(UUID id, AuthorDTO dto)
-        throws InvalidFieldsException {
+    public boolean update(UUID id, AuthorDTO dto) throws InvalidFieldsException {
         validator.emptyFields(dto);
         return getById(id).map(author -> {
             author.setName(dto.name());

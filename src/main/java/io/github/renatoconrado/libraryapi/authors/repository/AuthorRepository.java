@@ -9,7 +9,14 @@ import java.util.List;
 import java.util.UUID;
 
 public @Repository interface AuthorRepository extends JpaRepository<Author, UUID> {
-    List<Author> findAllByNameContainingIgnoreCaseAndCitizenshipContainingIgnoreCase(String name, String citizenship);
+    List<Author> findAllByNameContainingIgnoreCaseAndCitizenshipContainingIgnoreCase(
+        String name,
+        String citizenship
+    );
 
-    boolean existsByNameAndBirthdateAndCitizenship(String name, LocalDate birthdate, String citizenship);
+    boolean existsByNameAndBirthdateAndCitizenship(
+        String name,
+        LocalDate birthdate,
+        String citizenship
+    );
 }

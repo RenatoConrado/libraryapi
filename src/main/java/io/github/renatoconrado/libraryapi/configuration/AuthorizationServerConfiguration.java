@@ -46,7 +46,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
-import static io.github.renatoconrado.libraryapi.configuration.ConfigurationConstants.Roles;
+import static io.github.renatoconrado.libraryapi.configuration.Constants.Roles;
 import static org.springframework.security.oauth2.server.authorization.OAuth2TokenType.ACCESS_TOKEN;
 
 @EnableWebSecurity
@@ -62,13 +62,15 @@ public class AuthorizationServerConfiguration {
      */
     @Deprecated
     public static UserDetailsService oldUserDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails user = User.builder()
+        UserDetails user = User
+            .builder()
             .username("user")
             .password(passwordEncoder.encode("123"))
             .roles(Roles.USER)
             .build();
 
-        UserDetails admin = User.builder()
+        UserDetails admin = User
+            .builder()
             .username("admin")
             .password(passwordEncoder.encode("123"))
             .roles(Roles.ADMIN)
@@ -84,24 +86,28 @@ public class AuthorizationServerConfiguration {
 
     @Bean
     @Order(1)
-    public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http)
-        throws Exception {
+    public SecurityFilterChain authorizationServerSecurityFilterChain(
+        HttpSecurity httpSecurity
+    ) throws Exception {
 
         var serverConfigurer = OAuth2AuthorizationServerConfigurer.authorizationServer();
 
-        http.securityMatcher(serverConfigurer.getEndpointsMatcher())
+        httpSecurity
+            .securityMatcher(serverConfigurer.getEndpointsMatcher())
             .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
             .with(
                 serverConfigurer,
                 authorizationServer -> authorizationServer.oidc(Customizer.withDefaults())
             )
             .oauth2ResourceServer(resource -> resource.jwt(Customizer.withDefaults()))
-            .exceptionHandling(exceptions -> exceptions.defaultAuthenticationEntryPointFor(
-                new LoginUrlAuthenticationEntryPoint("/login"),
-                new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
-            ));
+            .exceptionHandling(exceptions ->
+                exceptions.defaultAuthenticationEntryPointFor(
+                    new LoginUrlAuthenticationEntryPoint("/login"),
+                    new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
+                )
+            );
 
-        return http.build();
+        return httpSecurity.build();
     }
 
     @Bean
@@ -120,7 +126,7 @@ public class AuthorizationServerConfiguration {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(12);
     }
 
     @Bean //JWK - JSON Web Key
@@ -138,7 +144,9 @@ public class AuthorizationServerConfiguration {
         RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
         RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
 
-        return new RSAKey.Builder(publicKey).privateKey(privateKey)
+        return new RSAKey
+            .Builder(publicKey)
+            .privateKey(privateKey)
             .keyID(UUID.randomUUID().toString())
             .build();
     }
@@ -150,7 +158,8 @@ public class AuthorizationServerConfiguration {
 
     @Bean
     public AuthorizationServerSettings authorizationServerSettings() {
-        return AuthorizationServerSettings.builder()
+        return AuthorizationServerSettings
+            .builder()
             .authorizationEndpoint("/oauth2/authorize")
             .pushedAuthorizationRequestEndpoint("/oauth2/par")
             .deviceAuthorizationEndpoint("/oauth2/device_authorization")

@@ -6,6 +6,7 @@ import io.github.renatoconrado.libraryapi.exception.custom.InvalidFieldsExceptio
 import io.github.renatoconrado.libraryapi.exception.custom.ProcedureNotAllowedException;
 import io.github.renatoconrado.libraryapi.exception.error.ErrorResponse;
 import io.github.renatoconrado.libraryapi.exception.error.FieldAndError;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -17,22 +18,30 @@ import java.util.List;
 
 import static io.github.renatoconrado.libraryapi.common.constants.Validation.VALIDATION_ERROR;
 
+@Slf4j
 public @RestControllerAdvice class GlobalExceptionHandler {
 
-/*    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)
     public ErrorResponse unhandledException(RuntimeException exception) {
-        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
-                                 "Unexpected error: " + exception.getMessage(),
-                                 List.of());
-    }*/
+        log.error("Unhandled Error ", exception);
+
+        return new ErrorResponse(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            "An unexpected error occurred. Please try again later.",
+            List.of()
+        );
+    }
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ErrorResponse handleMethodArgumentNotValid(
         MethodArgumentNotValidException exception
     ) {
-        List<FieldAndError> fieldAndErrors = exception.getFieldErrors()
+        log.error("Validation Error>: {}", exception.getMessage());
+
+        List<FieldAndError> fieldAndErrors = exception
+            .getFieldErrors()
             .stream()
             .map(fe -> new FieldAndError(fe.getField(), fe.getDefaultMessage()))
             .toList();
@@ -67,10 +76,7 @@ public @RestControllerAdvice class GlobalExceptionHandler {
         return new ErrorResponse(
             HttpStatus.UNPROCESSABLE_ENTITY,
             VALIDATION_ERROR,
-            List.of(new FieldAndError(
-                exception.getField(),
-                exception.getMessage()
-            ))
+            List.of(new FieldAndError(exception.getField(), exception.getMessage()))
         );
     }
 

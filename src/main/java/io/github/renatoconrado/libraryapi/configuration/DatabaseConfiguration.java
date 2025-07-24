@@ -2,6 +2,7 @@ package io.github.renatoconrado.libraryapi.configuration;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,7 @@ import javax.sql.DataSource;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
+@Slf4j
 public @Configuration class DatabaseConfiguration {
     private static final int MIN_POOL_SIZE = 1;
     private static final int MAX_POOL_SIZE = 10;
@@ -26,6 +28,8 @@ public @Configuration class DatabaseConfiguration {
 //        return new DriverManagerDataSource(url, username, password);
 
     public @Bean DataSource hikariDataSource() {
+        log.info("Connected to DataBase URL: {}", url);
+
         var config = new HikariConfig();
         config.setJdbcUrl(url);
         config.setUsername(username);

@@ -1,21 +1,22 @@
 spring:
-  application.name: Library Api
-  config.import: optional:application-secrets.yml
-  datasource:
-    url: jdbc:postgresql://localhost:5432/library
-    username: postgres
-    password: postgres
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    show-sql: true
-    hibernate.ddl-auto: none
-    properties.hibernate.format_sql: true
-  security.oauth2.client.registration:
-    google:
-      client-id: ${secrets.GOOGLE_CLIENT_ID}
-      client-secret: ${secrets.GOOGLE_CLIENT_SECRET}
+  application:
+    name: Library Api - ${spring.profiles.active}
+  profiles: # dev | prod
+    active: prod
+  config:
+    import: optional:secrets/application-secrets.yml
+
 logging:
-  include-application-group: false
-  include-application-name: false
   pattern:
-    dateformat: h:m:s
+    console: '%clr(%d{dd-MM-yyyy HH:mm:ss}){faint} %clr(%5p) %clr([%t]){faint} %clr(%-40.40logger){cyan} %clr(:){yellow} %m%n'
+
+springdoc:
+  override-with-generic-response: false
+
+management:
+  server:
+    port: 9090
+  endpoints:
+    web:
+      exposure:
+        include: "*"

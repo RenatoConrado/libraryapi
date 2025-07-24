@@ -11,6 +11,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -18,8 +19,8 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtGra
 import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 
-import static io.github.renatoconrado.libraryapi.configuration.ConfigurationConstants.Endpoints;
-import static io.github.renatoconrado.libraryapi.configuration.ConfigurationConstants.Roles;
+import static io.github.renatoconrado.libraryapi.configuration.Constants.Endpoints;
+import static io.github.renatoconrado.libraryapi.configuration.Constants.Roles;
 
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 public @Configuration class SecurityConfiguration {
@@ -35,7 +36,7 @@ public @Configuration class SecurityConfiguration {
 
     @Bean
     @Order(2)
-    public SecurityFilterChain configure(
+    public SecurityFilterChain securityFilterChainConfiguration(
         HttpSecurity http,
         LoginSocialSuccessHandler loginSocialSuccessHandler,
         JwtCustomAuthenticationFilter jwtCustomAuthenticationFilter
@@ -67,6 +68,11 @@ public @Configuration class SecurityConfiguration {
     @Bean
     public UserDetailsService userDetailsService(UserService userService) {
         return new CustomUserDetailsService(userService);
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring().requestMatchers(Endpoints.IGNORE);
     }
 
 }

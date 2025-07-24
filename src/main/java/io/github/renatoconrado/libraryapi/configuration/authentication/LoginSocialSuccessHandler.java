@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.List;
 
-import static io.github.renatoconrado.libraryapi.configuration.ConfigurationConstants.Roles;
+import static io.github.renatoconrado.libraryapi.configuration.Constants.Roles;
 
 @RequiredArgsConstructor
 @Component

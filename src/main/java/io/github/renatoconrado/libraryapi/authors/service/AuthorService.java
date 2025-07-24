@@ -74,7 +74,7 @@ public @Service class AuthorService {
      * @return {@code true} if updated, {@code false} if author not found or DTO is invalid
      * @throws InvalidFieldsException if all fields are empty
      */
-    public boolean update(UUID id, AuthorDTO dto) throws InvalidFieldsException {
+    public boolean update(UUID id, AuthorDTO dto) {
         validator.emptyFields(dto);
         return getById(id).map(author -> {
             author.setName(dto.name());
@@ -89,7 +89,7 @@ public @Service class AuthorService {
      * @return {@code true} if deleted, {@code false} if author not found
      * @throws ProcedureNotAllowedException if author has books
      */
-    public boolean delete(UUID uuid) throws ProcedureNotAllowedException {
+    public boolean delete(UUID uuid) {
         return repository.findById(uuid).map(author -> {
             validator.hasBook(author);
             repository.delete(author);

@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,8 +18,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-@Component
 @RequiredArgsConstructor
+@Slf4j
+@Component
 public class JwtCustomAuthenticationFilter extends OncePerRequestFilter {
 
     private final UserService userService;
@@ -39,9 +41,9 @@ public class JwtCustomAuthenticationFilter extends OncePerRequestFilter {
 
             Authentication customAuthentication = new CustomAuthentication(user);
             context.setAuthentication(customAuthentication);
-            System.out.println(customAuthentication.getPrincipal());
+            log.debug("é JwtAuthToken: {}", customAuthentication.getPrincipal());
         } else if (authentication != null) {
-            System.out.println("Não é JwtAuthenticationToken: " + authentication.getPrincipal());
+            log.debug("Não é JwtAuthenticationToken: {}", authentication.getPrincipal());
         }
 
         filterChain.doFilter(request, response);

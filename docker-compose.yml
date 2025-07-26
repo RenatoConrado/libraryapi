@@ -2,23 +2,26 @@ networks:
   library-network:
     driver: bridge
 
+volumes:
+  db-data:
+
 services:
   app:
-    build: .
-    container_name: spring-library-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: renatoconrado/libraryapi
+    container_name: libraryapi-production
     ports:
       - "8080:8080"
+      - "9090:9090"
     networks:
       - library-network
     depends_on:
       database:
         condition: service_healthy
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/library
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
   database:
-    image: postgres
+    image: postgres:17
     container_name: library-database
     ports:
       - "5432:5432"
@@ -28,6 +31,7 @@ services:
       POSTGRES_DB: library
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+    restart: always
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
       interval: 10s

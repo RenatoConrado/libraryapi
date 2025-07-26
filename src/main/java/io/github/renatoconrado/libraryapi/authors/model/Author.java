@@ -73,14 +73,15 @@ public @Entity class Author {
                                        .getPersistentClass()
                                    : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy
-                                      ? ((HibernateProxy) this).getHibernateLazyInitializer()
+                                      ? ((HibernateProxy) this)
+                                          .getHibernateLazyInitializer()
                                           .getPersistentClass()
-                                      : this.getClass();
+                                      : getClass();
         if (thisEffectiveClass != oEffectiveClass) {
             return false;
         }
         Author author = (Author) o;
-        return getId() != null && Objects.equals(getId(), author.getId());
+        return id != null && Objects.equals(id, author.id);
     }
 
     @Override

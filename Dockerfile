@@ -1,10 +1,14 @@
-FROM eclipse-temurin:21-jdk-jammy
-LABEL authors="Renato"
+FROM maven:3.9.11-amazoncorretto-21-al2023 as builder
+WORKDIR /build
+COPY . .
+RUN mvn clean package -DskipTests
 
+FROM amazoncorretto:21.0.8-alpine
 WORKDIR /app
+COPY --from=builder ./build/target/*.jar ./libraryapi.jar
 
-COPY target/*.jar app.jar
+EXPOSE 8080 9090
 
-EXPOSE 8080
+ENV TZ='America/Sao_Paulo'
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Duser.timezone=America/Sao_Paulo", "-jar", "libraryapi.jar"]
